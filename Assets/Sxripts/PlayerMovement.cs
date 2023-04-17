@@ -1,31 +1,53 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float speed;
+    public float moveTime = 0.1f;
     private Rigidbody2D rb;
-    private Vector2 moveDirection;
     private Tilemap tilemap;
+    private Vector2 targetPosition;
+    private bool isMoving;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         tilemap = FindObjectOfType<Tilemap>();
+        targetPosition = rb.position;
+        isMoving = false;
     }
 
     private void Update()
     {
-        float moveX = Input.GetAxis("Horizontal");
-        float moveY = Input.GetAxis("Vertical");
-        moveDirection = new Vector2(moveX, moveY).normalized;
+        if (!isMoving)
+        {
+            int moveX = (int)Input.GetAxisRaw("Horizontal");
+            int moveY = (int)Input.GetAxisRaw("Vertical");
+
+            if (moveX != 0 || moveY != 0)
+            {
+                StartCoroutine(Move(new Vector2(moveX, moveY)));
+            }
+        }
     }
 
-    private void FixedUpdate()
+    private IEnumerator Move(Vector2 direction)
     {
-        rb.velocity = moveDirection * speed;
+        isMoving = true;
+        float elapsedTime = 0;
+        Vector2 startPosition = rb.position;
+        targetPosition = startPosition + direction;
+
+        while (elapsedTime < moveTime)
+        {
+            elapsedTime += Time.deltaTime;
+            rb.position = Vector2.Lerp(startPosition, targetPosition, elapsedTime / moveTime);
+            yield return null;
+        }
+
+        rb.position = targetPosition;
+        isMoving = false;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -43,5 +65,4 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-
 }
