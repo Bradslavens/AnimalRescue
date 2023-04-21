@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Pathfinding;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -63,6 +64,8 @@ public class PlayerMovement : MonoBehaviour
                 hitPosition.y = hit.point.y - 0.01f * hit.normal.y;
                 tilemap.SetTile(tilemap.WorldToCell(hitPosition), null);
             }
+
+            AstarPath.active.Scan();
         }
     }
 }
