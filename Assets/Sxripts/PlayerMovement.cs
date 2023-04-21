@@ -40,6 +40,12 @@ public class PlayerMovement : MonoBehaviour
         Vector2 startPosition = rb.position;
         targetPosition = startPosition + direction;
 
+        // Restrict movement on the Y-axis
+        if (targetPosition.y > 0.55f)
+        {
+            targetPosition.y = 0.55f;
+        }
+
         while (elapsedTime < moveTime)
         {
             elapsedTime += Time.deltaTime;
